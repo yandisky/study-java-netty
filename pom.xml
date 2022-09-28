@@ -23,6 +23,7 @@
     <modules>
         <module>netty-springboot</module>
         <module>netty-protobuf</module>
+        <module>netty-javabuf</module>
     </modules>
 
     <dependencies>
