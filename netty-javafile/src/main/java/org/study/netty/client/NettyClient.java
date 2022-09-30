@@ -21,6 +21,7 @@ public class NettyClient {
             bootstrap.option(ChannelOption.AUTO_READ, true);
             bootstrap.handler(new MyChannelInitializer());
             channelFuture = bootstrap.connect(host, port).syncUninterruptibly();
+            channelFuture.addListener(new MyChannelFutureListener());//处理断线重连
             channel = channelFuture.channel();
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.study.netty.domain.*;
 import org.study.netty.util.CacheUtil;
 import org.study.netty.util.FileUtil;
@@ -19,6 +21,26 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
         System.out.println("链接IP:" + channel.localAddress().getHostString());
         System.out.println("链接Port:" + channel.localAddress().getPort());
         String str = "客户端链接建立成功" + " " + new Date() + " " + channel.localAddress().getHostString();
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        super.userEventTriggered(ctx, evt);
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent idleStateEvent = (IdleStateEvent) evt;
+            if (idleStateEvent.state() == IdleState.READER_IDLE) {
+                System.out.println("断线重连 => Reader Idle");
+                ctx.writeAndFlush("读取等待：客户端你在吗");
+                ctx.close();
+            } else if (idleStateEvent.state() == IdleState.WRITER_IDLE) {
+                System.out.println("断线重连 => Write Idle");
+                ctx.writeAndFlush("写入等待：客户端你在吗");
+            } else if (idleStateEvent.state() == IdleState.ALL_IDLE) {
+                System.out.println("断线重连 => All Idle");
+                ctx.writeAndFlush("全部时间：客户端你在吗");
+            }
+        }
+        ctx.flush();
     }
 
     @Override

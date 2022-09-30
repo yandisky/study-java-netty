@@ -24,6 +24,19 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("断开链接" + ctx.channel().localAddress().toString());
+        //使用过程中断线重连
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new NettyClient().connect("127.0.0.1", 7397);
+                    System.out.println("断线重连 inactive client start done");
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    System.out.println("断线重连 inactive client start error");
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -45,10 +58,10 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
             System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 客户端传输SIZE(byte)" + (fileBurstData.getEndPos() - fileBurstData.getBeginPos()));
         }
         //模拟传输过程中断
-        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 客户端传输[主动断开链接，模拟断点续传]");
+        /*System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 客户端传输[主动断开链接，模拟断点续传]");
         ctx.flush();
         ctx.close();
-        System.exit(-1);
+        System.exit(-1);*/
     }
 
     @Override
