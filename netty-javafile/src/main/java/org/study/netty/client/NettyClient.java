@@ -12,7 +12,7 @@ public class NettyClient {
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
     private Channel channel;
 
-    private ChannelFuture connect(String host, int port) {
+    public ChannelFuture connect(String host, int port) {
         ChannelFuture channelFuture = null;
         try {
             Bootstrap bootstrap = new Bootstrap();

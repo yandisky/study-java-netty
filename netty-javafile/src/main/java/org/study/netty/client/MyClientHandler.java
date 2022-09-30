@@ -1,6 +1,5 @@
 package org.study.netty.client;
 
-import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.SocketChannel;
@@ -32,6 +31,7 @@ public class MyClientHandler extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof FileTransferProtocol)) return;
         FileTransferProtocol fileTransferProtocol = (FileTransferProtocol) msg;
         if (Constants.TransferType.INSTRUCT == fileTransferProtocol.getTransferType()) {
+            //接受server数据，根据FileBurstInstruct定义数据读取开始位置，读取文件数据生成FileBurstData返回
             FileBurstInstruct fileBurstInstruct = (FileBurstInstruct) fileTransferProtocol.getTransferObj();
             if (Constants.FileStatus.COMPLETE == fileBurstInstruct.getStatus()) {
                 ctx.flush();

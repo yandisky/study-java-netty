@@ -31,11 +31,14 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
         if (!(msg instanceof FileTransferProtocol)) return;
         FileTransferProtocol fileTransferProtocol = (FileTransferProtocol) msg;
         if (Constants.TransferType.REQUEST == fileTransferProtocol.getTransferType()) {
+            //接受请求数据通过FileDescInfo进行传输、
+            //1，判断FileDescInfo是否已经存在传输记录，支持断点续传
+            //2，将FileDescInfo转换为FileBurstInstruct进行传输给client，作用于client回调server后对FileBurstData进行写文件操作
             FileDescInfo fileDescInfo = (FileDescInfo) fileTransferProtocol.getTransferObj();
             //断点续传信息
             FileBurstInstruct fileBurstInstructOld = CacheUtil.burstDataMap.get(fileDescInfo.getFileName());
             if (null != fileBurstInstructOld) {
-                if (fileBurstInstructOld.getStatus() == Constants.FileStatus.COMPLETE) {
+                if (Constants.FileStatus.COMPLETE == fileBurstInstructOld.getStatus()) {
                     CacheUtil.burstDataMap.remove(fileDescInfo.getFileName());
                 }
                 //传输完成删除断点信息
@@ -48,12 +51,13 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
             ctx.writeAndFlush(sendFileTransferProtocol);
             System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 服务端接收" + JSON.toJSONString(fileDescInfo));
         } else if (Constants.TransferType.DATA == fileTransferProtocol.getTransferType()) {
+            //接受client传输的FileBurstData，进行写入文件操作，并且判断断点续传下是否传输完成，将FileBurstInstruct传给client但是由于断点所以不会持续传输
             FileBurstData fileBurstData = (FileBurstData) fileTransferProtocol.getTransferObj();
             FileBurstInstruct fileBurstInstruct = FileUtil.writeFile("E://", fileBurstData);
             //保存断点续传信息
             CacheUtil.burstDataMap.put(fileBurstData.getFileName(), fileBurstInstruct);
             ctx.writeAndFlush(MsgUtil.buildTransferInstruct(fileBurstInstruct));
-            System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 服务端接收" + JSON.toJSONString(fileBurstData));
+            System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " 服务端接收" + JSON.toJSONString(fileBurstData.toString()));
             //传输完成删除断点信息
             if (fileBurstInstruct.getStatus() == Constants.FileStatus.COMPLETE) {
                 CacheUtil.burstDataMap.remove(fileBurstData.getFileName());

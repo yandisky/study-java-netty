@@ -62,4 +62,15 @@ public class FileBurstData {
     public void setStatus(Integer status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "FileBurstData{" +
+                "fileUrl='" + fileUrl + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", beginPos=" + beginPos +
+                ", endPos=" + endPos +
+                ", status=" + status +
+                '}';
+    }
 }

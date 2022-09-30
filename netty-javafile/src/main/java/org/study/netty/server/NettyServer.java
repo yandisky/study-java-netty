@@ -13,7 +13,7 @@ public class NettyServer {
     private EventLoopGroup childGroup = new NioEventLoopGroup();
     private Channel channel;
 
-    private ChannelFuture bind(int port) {
+    public ChannelFuture bind(int port) {
         ChannelFuture channelFuture = null;
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -40,9 +40,5 @@ public class NettyServer {
         channel.close();
         parentGroup.shutdownGracefully();
         childGroup.shutdownGracefully();
-    }
-
-    public Channel getChannel() {
-        return channel;
     }
 }

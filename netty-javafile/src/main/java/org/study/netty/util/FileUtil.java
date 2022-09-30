@@ -13,7 +13,7 @@ public class FileUtil {
         File file = new File(fileUrl);
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
         randomAccessFile.seek(readPosition);
-        byte[] bytes = new byte[1024 * 100];
+        byte[] bytes = new byte[1024];
         int readSize = randomAccessFile.read(bytes);
         if (readSize <= 0) {
             randomAccessFile.close();
@@ -25,7 +25,7 @@ public class FileUtil {
         fileBurstData.setBeginPos(readPosition);
         fileBurstData.setEndPos(readPosition + readSize);
         //不足1024需要拷贝去掉空字符
-        if (readSize < 1024 * 100) {
+        if (readSize < 1024) {
             byte[] copy = new byte[readSize];
             System.arraycopy(bytes, 0, copy, 0, readSize);
             fileBurstData.setBytes(copy);
@@ -45,7 +45,7 @@ public class FileUtil {
         File file = new File(baseUrl + "/" + fileBurstData.getFileName());
         RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
         randomAccessFile.seek(fileBurstData.getBeginPos());//移动文件记录指针的位置
-        randomAccessFile.write(fileBurstData.getEndPos());//调用了seek（start）方法，是指把文件的记录指针定位到start字节的位置。也就是说程序将从start字节开始写数据
+        randomAccessFile.write(fileBurstData.getBytes());//调用了seek（start）方法，是指把文件的记录指针定位到start字节的位置。也就是说程序将从start字节开始写数据
         randomAccessFile.close();
         if (Constants.FileStatus.END == fileBurstData.getStatus()) {
             return new FileBurstInstruct(Constants.FileStatus.COMPLETE);
