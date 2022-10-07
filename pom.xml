@@ -26,6 +26,7 @@
         <module>netty-javabuf</module>
         <module>netty-javafile</module>
         <module>netty-syncrpc</module>
+        <module>netty-chunk</module>
     </modules>
 
     <dependencies>
