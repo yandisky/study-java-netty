@@ -25,6 +25,7 @@
         <module>netty-protobuf</module>
         <module>netty-javabuf</module>
         <module>netty-javafile</module>
+        <module>netty-syncrpc</module>
     </modules>
 
     <dependencies>
