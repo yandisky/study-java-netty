@@ -29,6 +29,7 @@
         <module>netty-chunk</module>
         <module>netty-msg</module>
         <module>netty-traffic</module>
+        <module>netty-ark</module>
     </modules>
 
     <dependencies>
